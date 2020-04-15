@@ -20,7 +20,7 @@ class Comic:
             views {int|str} -- Views (default: {None})
             rating {float|str} -- Ratings on the scale of 1-5 (default: {None})
             summary {str} -- Summary of the comic (default: {None})
-            chapters {list(Chapter)} -- List of chapters of the comic (default: {None})
+            chapters {list[Chapter]} -- List of chapters of the comic (default: {None})
         """
 
         self.title = title

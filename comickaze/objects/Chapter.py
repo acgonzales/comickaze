@@ -10,6 +10,7 @@ class Chapter:
         Keyword Arguments:
             date {datetime|str} -- Date published (default: {None})
         """
+
         self.title = title
         self.link = link
         self.comic = comic

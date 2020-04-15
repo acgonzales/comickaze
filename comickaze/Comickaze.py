@@ -11,12 +11,27 @@ class Comickaze:
     BASE_URL = "https://readcomicsonline.ru"
 
     def __init__(self, log_level="ERROR"):
+        """Comickaze instance
+
+        Keyword Arguments:
+            log_level {str} -- Log level (default: {"ERROR"})
+        """
+
         self.logger = logging.getLogger(__name__)
         coloredlogs.install(level=log_level, logger=self.logger)
 
         self.session = requests.session()
 
     def get_comic(self, link) -> Comic:
+        """Gets information about the comic in the given link
+
+        Arguments:
+            link {str} -- Link of the comic
+
+        Returns:
+            Comic -- Comic object
+        """
+
         try:
             self.logger.info(f"Trying to access {link}")
             res = self.session.get(link)
@@ -125,7 +140,16 @@ class Comickaze:
                 f"Something went wrong parsing the page.")
             raise
 
-    def search_comics(self, query) -> [Suggestion]:
+    def search_comics(self, query) -> list:
+        """Searches comics
+
+        Arguments:
+            query {str} -- Query
+
+        Returns:
+            list[Suggestion] -- Search results in a form of {Suggestion}
+        """
+
         self.logger.info(f"Searching for {query}...")
         res = self.session.get("{0}/search".format(self.BASE_URL), params={
             "query": query
