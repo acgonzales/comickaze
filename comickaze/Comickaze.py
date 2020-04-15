@@ -111,9 +111,9 @@ class Comickaze:
 
                 self.logger.debug(f"Found {tag}: {val}")
 
-            summary = col.find("div", attrs={"class": "manga well"}).find(
+            comic.summary = col.find("div", attrs={"class": "manga well"}).find(
                 "p").text.strip()
-            self.logger.debug(f"Found summary: {summary}")
+            self.logger.debug(f"Found summary: {comic.summary}")
 
             li_chapters = col.find("ul", attrs={"class": "chapters"}).find_all(
                 "li", attrs={"class": "volume-0"})
@@ -122,7 +122,7 @@ class Comickaze:
                 _anch = chapter.find(
                     "h5", attrs={"class": "chapter-title-rtl"}).find("a")
 
-                title = _anch.text.strip()
+                chapter_title = _anch.text.strip()
                 chapter_link = _anch["href"]
 
                 try:
@@ -132,7 +132,10 @@ class Comickaze:
                     date = None
 
                 comic.chapters.append(
-                    Chapter(title, chapter_link, comic, date=date))
+                    Chapter(chapter_title, chapter_link, comic, date=date))
+
+            self.logger.info(
+                f"Found {title} with {len(comic.chapters)} chapter(s).")
 
             return comic
         except:
