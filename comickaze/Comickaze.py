@@ -10,7 +10,7 @@ from .util import soupify
 class Comickaze:
     BASE_URL = "https://readcomicsonline.ru"
 
-    def __init__(self, log_level="ERROR"):
+    def __init__(self, log_level: str = "ERROR"):
         """Comickaze instance
 
         Keyword Arguments:
@@ -22,7 +22,7 @@ class Comickaze:
 
         self.session = requests.session()
 
-    def get_comic(self, link) -> Comic:
+    def get_comic(self, link: str) -> Comic:
         """Gets information about the comic in the given link
 
         Arguments:
@@ -140,7 +140,7 @@ class Comickaze:
                 f"Something went wrong parsing the page.")
             raise
 
-    def search_comics(self, query) -> list:
+    def search_comics(self, query: str) -> list:
         """Searches comics
 
         Arguments:
