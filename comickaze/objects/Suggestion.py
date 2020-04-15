@@ -13,5 +13,8 @@ class Suggestion:
         self.slug = slug
         self.link = f"{comickaze.BASE_URL}/comic/{slug}"
 
+    def get_comic(self):
+        return self.comickaze.get_comic(self.link)
+
     def __str__(self):
         return self.title

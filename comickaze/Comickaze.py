@@ -3,23 +3,135 @@ import logging
 import coloredlogs
 import requests
 
-from .objects import Suggestion
+from .objects import Suggestion, Comic, Chapter
+from .util import soupify
 
 
 class Comickaze:
     BASE_URL = "https://readcomicsonline.ru"
 
-    def __init__(self, log_level="INFO"):
+    def __init__(self, log_level="ERROR"):
         self.logger = logging.getLogger(__name__)
         coloredlogs.install(level=log_level, logger=self.logger)
 
         self.session = requests.session()
 
-    def search_comics(self, query):
+    def get_comic(self, link) -> Comic:
+        try:
+            self.logger.info(f"Trying to access {link}")
+            res = self.session.get(link)
+        except:
+            self.logger.error(
+                f"Something went wrong accessing the page: {link}.")
+            raise
+
+        try:
+            self.logger.info(f"Trying to parse the page...")
+            soup = soupify(res.text)
+
+            col = soup.find("div", attrs={"class": "col-sm-12"})
+
+            list_container = col.find("div", attrs={"class": "list-container"})
+
+            title = list_container.find(
+                "h2", attrs={"class": "listmanga-header"}).text.strip()
+            self.logger.debug(f"Found title: {title}")
+
+            comic = Comic(title, link)
+
+            image = list_container.find("img", attrs={"img-responsive"})["src"]
+            comic.image = "https://www." + image[2:]
+            self.logger.debug(f"Found image: {image}")
+
+            info_box = col.find("dl", attrs={"class": "dl-horizontal"})
+
+            d_tags = info_box.find_all("dt")
+            d_data = info_box.find_all("dd")
+
+            for i, tag in enumerate(d_tags):
+                tag = tag.text.lower()
+                data_text = d_data[i].text.strip()
+                val = data_text
+
+                if tag == "type":
+                    comic.comic_type = data_text
+                elif tag == "status":
+                    comic.status = data_text
+                elif tag == "other names":
+                    comic.other_names = data_text
+                elif tag == "author(s)":
+                    _authors = d_data[i].find_all("a")
+                    comic.authors = [a.text.strip() for a in _authors]
+                    val = comic.authors
+                elif tag == "date of release":
+                    comic.year = data_text
+                elif tag == "categories":
+                    _categories = d_data[i].find_all("a")
+                    comic.categories = [c.text.strip() for c in _categories]
+                    val = comic.categories
+                elif tag == "tags":
+                    _tags = d_data[i].find_all("a")
+                    comic.tags = [t.text.strip() for t in _tags]
+                    val = comic.tags
+                elif tag == "views":
+                    try:
+                        views = int(data_text)
+                    except ValueError:
+                        views = data_text
+
+                    comic.views = views
+                    val = views
+                elif tag == "rating":
+                    rating_div = d_data[i].find(
+                        "div", attrs={"id": "item-rating"})
+                    score = rating_div["data-score"]
+
+                    try:
+                        rating = float(score)
+                    except ValueError:
+                        rating = score
+
+                    comic.rating = rating
+                    val = rating
+
+                self.logger.debug(f"Found {tag}: {val}")
+
+            summary = col.find("div", attrs={"class": "manga well"}).find(
+                "p").text.strip()
+            self.logger.debug(f"Found summary: {summary}")
+
+            li_chapters = col.find("ul", attrs={"class": "chapters"}).find_all(
+                "li", attrs={"class": "volume-0"})
+            comic.chapters = []
+            for chapter in li_chapters:
+                _anch = chapter.find(
+                    "h5", attrs={"class": "chapter-title-rtl"}).find("a")
+
+                title = _anch.text.strip()
+                chapter_link = _anch["href"]
+
+                try:
+                    date = chapter.find(
+                        "div", attrs={"class": "date-chapter-title-rtl"}).text.strip()
+                except:
+                    date = None
+
+                comic.chapters.append(
+                    Chapter(title, chapter_link, comic, date=date))
+
+            return comic
+        except:
+            self.logger.error(
+                f"Something went wrong parsing the page.")
+            raise
+
+    def search_comics(self, query) -> [Suggestion]:
+        self.logger.info(f"Searching for {query}...")
         res = self.session.get("{0}/search".format(self.BASE_URL), params={
             "query": query
         })
 
         suggestions = res.json()["suggestions"]
+        self.logger.info(f"Search done. Found {len(suggestions)} suggestions.")
 
         return [Suggestion(self, suggestion["value"], suggestion["data"]) for suggestion in suggestions]
