@@ -9,10 +9,11 @@ pylint = "*"
 
 [packages]
 requests = "*"
+tqdm = "*"
 click = "*"
 pyinquirer = "*"
+coloredlogs = "*"
 colorama = "*"
-tqdm = "*"
 
 [requires]
 python_version = "3.7"
