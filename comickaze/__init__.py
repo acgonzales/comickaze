@@ -1,2 +1,3 @@
-from comickaze import Comickaze
+from . import objects
 from . import util
+from .Comickaze import Comickaze

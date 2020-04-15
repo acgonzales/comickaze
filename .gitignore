@@ -124,6 +124,7 @@ dmypy.json
 .pyre/
 
 ### VisualStudioCode ###
+.vscode/
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -138,3 +139,4 @@ dmypy.json
 
 # Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
 
+test.py
