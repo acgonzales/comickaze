@@ -3,7 +3,12 @@ import string
 from os import path
 import pathlib
 
+import requests
 from bs4 import BeautifulSoup
+
+
+def create_session():
+    return requests.session()
 
 
 def soupify(markup) -> BeautifulSoup:
