@@ -23,8 +23,8 @@ class Chapter:
         self.date = date
         self.pages = []
 
-    def get_links(self):
-        return self.comickaze.get_chapter_links(self)
+    def get_pages(self):
+        return self.comickaze.get_chapter_pages(self)
 
     def __str__(self):
         return self.title

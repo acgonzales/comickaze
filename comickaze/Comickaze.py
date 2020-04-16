@@ -152,7 +152,7 @@ class Comickaze:
                     date = None
 
                 comic.chapters.append(
-                    Chapter(chapter_title, chapter_link, comic, date=date))
+                    Chapter(self, chapter_title, chapter_link, comic, date=date))
 
             self.logger.info(
                 f"Found {title} with {len(comic.chapters)} chapter(s).")
@@ -163,7 +163,7 @@ class Comickaze:
                 f"Something went wrong parsing the page.")
             raise
 
-    def get_chapter_links(self, chapter: Chapter):
+    def get_chapter_pages(self, chapter: Chapter):
         link = chapter.link
         chapter_slug = link[link.rfind("/") + 1:]
 
