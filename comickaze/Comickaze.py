@@ -1,10 +1,12 @@
+from typing import List
 import logging
 
 import coloredlogs
 import requests
 
+from .Downloader import Downloader
 from .objects import Suggestion, Comic, Chapter
-from .util import soupify
+from .util import soupify, create_session
 
 
 class Comickaze:
@@ -16,11 +18,11 @@ class Comickaze:
         Keyword Arguments:
             log_level {str} -- Log level (default: {"ERROR"})
         """
-
+        self.log_level = log_level
         self.logger = logging.getLogger(__name__)
         coloredlogs.install(level=log_level, logger=self.logger)
 
-        self.session = requests.session()
+        self.session = create_session()
 
     def search_comics(self, query: str) -> list:
         """Searches comics
@@ -170,7 +172,6 @@ class Comickaze:
         image_link_format = f"https://readcomicsonline.ru/uploads/manga/{chapter.comic.slug}/chapters/{chapter_slug}/"
 
         try:
-            self.logger.info(f"Trying to access {link}")
             res = self.session.get(link)
         except:
             self.logger.error(
@@ -178,7 +179,6 @@ class Comickaze:
             raise
 
         try:
-            self.logger.info(f"Trying to parse the page...")
             soup = soupify(res.text)
 
             pages_select = soup.find("select", attrs={"id": "page-list"})
@@ -198,5 +198,8 @@ class Comickaze:
                 f"Something went wrong parsing the page.")
             raise
 
-    def download_chapter(self, chapter: Chapter, download_dir: str):
-        pass
+    def create_chapter_downloader(self, chapter: Chapter, number_of_threads=2):
+        return Downloader(self, [chapter], number_of_threads=number_of_threads)
+
+    def create_multi_chapter_downloader(self, chapters: List[Chapter], number_of_threads=2):
+        return Downloader(self, chapters, number_of_threads=number_of_threads)
