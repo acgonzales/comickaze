@@ -7,6 +7,7 @@ class Comic:
         Arguments:
             title {str} -- Title
             link {str} -- Link
+            slug {str} -- Url slug
 
         Keyword Arguments:
             image {str} -- Url of the cover image (default: {None})
@@ -25,6 +26,7 @@ class Comic:
 
         self.title = title
         self.link = link
+        self.slug = link[link.rfind("/") + 1:]
         self.summary = summary
         self.chapters = chapters
         self.image = image

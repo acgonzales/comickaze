@@ -22,6 +22,26 @@ class Comickaze:
 
         self.session = requests.session()
 
+    def search_comics(self, query: str) -> list:
+        """Searches comics
+
+        Arguments:
+            query {str} -- Query
+
+        Returns:
+            list[Suggestion] -- Search results in a form of {Suggestion}
+        """
+
+        self.logger.info(f"Searching for {query}...")
+        res = self.session.get("{0}/search".format(self.BASE_URL), params={
+            "query": query
+        })
+
+        suggestions = res.json()["suggestions"]
+        self.logger.info(f"Search done. Found {len(suggestions)} suggestions.")
+
+        return [Suggestion(self, suggestion["value"], suggestion["data"]) for suggestion in suggestions]
+
     def get_comic(self, link: str) -> Comic:
         """Gets information about the comic in the given link
 
@@ -56,7 +76,7 @@ class Comickaze:
 
             image = list_container.find("img", attrs={"img-responsive"})["src"]
             comic.image = "https://www." + image[2:]
-            self.logger.debug(f"Found image: {image}")
+            self.logger.debug(f"Found image: {comic.image}")
 
             info_box = col.find("dl", attrs={"class": "dl-horizontal"})
 
@@ -143,22 +163,40 @@ class Comickaze:
                 f"Something went wrong parsing the page.")
             raise
 
-    def search_comics(self, query: str) -> list:
-        """Searches comics
+    def get_chapter_links(self, chapter: Chapter):
+        link = chapter.link
+        chapter_slug = link[link.rfind("/") + 1:]
 
-        Arguments:
-            query {str} -- Query
+        image_link_format = f"https://readcomicsonline.ru/uploads/manga/{chapter.comic.slug}/chapters/{chapter_slug}/"
 
-        Returns:
-            list[Suggestion] -- Search results in a form of {Suggestion}
-        """
+        try:
+            self.logger.info(f"Trying to access {link}")
+            res = self.session.get(link)
+        except:
+            self.logger.error(
+                f"Something went wrong accessing the page: {link}.")
+            raise
 
-        self.logger.info(f"Searching for {query}...")
-        res = self.session.get("{0}/search".format(self.BASE_URL), params={
-            "query": query
-        })
+        try:
+            self.logger.info(f"Trying to parse the page...")
+            soup = soupify(res.text)
 
-        suggestions = res.json()["suggestions"]
-        self.logger.info(f"Search done. Found {len(suggestions)} suggestions.")
+            pages_select = soup.find("select", attrs={"id": "page-list"})
 
-        return [Suggestion(self, suggestion["value"], suggestion["data"]) for suggestion in suggestions]
+            for option in pages_select.find_all("option"):
+                val = int(option["value"])
+                s_val = str(val)
+
+                if val < 10:
+                    s_val = "0" + s_val
+
+                chapter.pages.append(image_link_format + f"{s_val}.jpg")
+
+            return chapter.pages
+        except:
+            self.logger.error(
+                f"Something went wrong parsing the page.")
+            raise
+
+    def download_chapter(self, chapter: Chapter, download_dir: str):
+        pass
