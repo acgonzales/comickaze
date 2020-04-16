@@ -1,9 +1,8 @@
 from .Comic import Comic
-from comickaze import Comickaze
 
 
 class Chapter:
-    def __init__(self, comickaze: Comickaze, title: str, link: str, comic: Comic, date=None):
+    def __init__(self, comickaze, title: str, link: str, comic: Comic, date=None):
         """Chapter of a {Comic}
 
         Arguments:
