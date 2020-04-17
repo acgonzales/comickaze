@@ -31,14 +31,14 @@ class Downloader:
         self.logger.info(
             f"Attempting to download {self.comic.title}, {len(self.chapters)} chapter(s).")
 
+        download_dir = path.normpath(download_dir)
+        comic_dir = path.join(
+            download_dir, clean_filename(self.comic.title))
+
+        self.logger.debug(f"Trying to create folders: {comic_dir}")
+        create_folders(comic_dir)
+
         with ChargingBar(f"Downloading {self.comic.title}", max=len(self.chapters), suffix=f"Chapter 1 of {len(self.chapters)}") as bar:
-            download_dir = path.normpath(download_dir)
-            comic_dir = path.join(
-                download_dir, clean_filename(self.comic.title))
-
-            self.logger.debug(f"Trying to create folders: {comic_dir}")
-            create_folders(comic_dir)
-
             start_time = time.time()
 
             for i, chapter in enumerate(self.chapters):
