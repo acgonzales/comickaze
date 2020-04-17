@@ -45,7 +45,7 @@ class Downloader:
             session = create_session()
 
             for i, chapter in enumerate(self.chapters):
-                bar.suffix = f"Chapter {i + 1} of {number_of_chapters}. ETA: %(eta)ds"
+                bar.suffix = f"Chapter {i + 1} of {number_of_chapters}. Estimated time left: %(eta)ds"
 
                 pages = chapter.get_pages()
 
@@ -59,6 +59,8 @@ class Downloader:
                     bar.next()
 
             end_time = time.time()
+
+            print()
             self.logger.info(
                 f"Download complete! Time elapsed: {end_time - start_time}")
 
@@ -104,7 +106,7 @@ class MultiThreadedDownloader(Downloader):
             for i, chapter in enumerate(self.chapters):
                 pages = chapter.pages
 
-                bar.suffix = f"Chapter {i + 1} of {number_of_chapters}. ETA: %(eta)ds"
+                bar.suffix = f"Chapter {i + 1} of {number_of_chapters}. Estimated time left: %(eta)ds"
 
                 chapter_dir = path.join(
                     comic_dir, clean_filename(chapter.title))
@@ -130,5 +132,7 @@ class MultiThreadedDownloader(Downloader):
                     thread.join()
 
             end_time = time.time()
+
+            print()
             self.logger.info(
                 f"Download complete! Time elapsed: {end_time - start_time}")
