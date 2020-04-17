@@ -207,9 +207,3 @@ class Comickaze:
             return MultiThreadedDownloader(self, chapters, number_of_threads=number_of_threads, daemon=daemon)
 
         return Downloader(self, chapters)
-
-    # def create_chapter_downloader(self, chapter: Chapter, number_of_threads=2):
-    #     return Downloader(self, [chapter], number_of_threads=number_of_threads)
-
-    # def create_multi_chapter_downloader(self, chapters: List[Chapter], number_of_threads=2):
-    #     return Downloader(self, chapters, number_of_threads=number_of_threads)

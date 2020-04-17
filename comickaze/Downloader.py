@@ -6,7 +6,7 @@ import time
 import logging
 
 import coloredlogs
-from progress.bar import IncrementalBar, FillingCirclesBar
+from progress.bar import FillingCirclesBar
 
 from . import Comickaze
 from .util import create_session, clean_filename, create_folders
@@ -33,11 +33,19 @@ class Downloader:
         self.logger.debug(f"Trying to create folders: {comic_dir}")
         create_folders(comic_dir)
 
-        with FillingCirclesBar(f"Downloading {self.comic.title}", max=len(self.chapters), suffix=f"Chapter 1 of {len(self.chapters)}") as bar:
+        total_pages = 0
+        for chapter in self.chapters:
+            total_pages += len(chapter.get_pages())
+
+        number_of_chapters = len(self.chapters)
+
+        with FillingCirclesBar(f"Downloading {self.comic.title}", max=total_pages) as bar:
             start_time = time.time()
 
+            session = create_session()
+
             for i, chapter in enumerate(self.chapters):
-                bar.suffix = f"Chapter {i + 1} of {len(self.chapters)}. ETA: %(eta)ds"
+                bar.suffix = f"Chapter {i + 1} of {number_of_chapters}. ETA: %(eta)ds"
 
                 pages = chapter.get_pages()
 
@@ -46,51 +54,57 @@ class Downloader:
                 self.logger.debug(f"Trying to create folders: {chapter_dir}")
                 create_folders(chapter_dir)
 
-                for page in IncrementalBar(f"Downloading {chapter.title}").iter(pages):
-                    self._download(page, chapter_dir)
-
-                bar.next()
+                for page in pages:
+                    self._download(page, chapter_dir, session=session)
+                    bar.next()
 
             end_time = time.time()
             self.logger.info(
                 f"Download complete! Time elapsed: {end_time - start_time}")
 
-    def _download_pages(self, pages: List[str], download_dir: str):
+    def _download_pages(self, pages: List[str], download_dir: str, session=create_session(), **kwargs):
         for page in pages:
-            self._download(page, download_dir)
+            self._download(page, download_dir, session=session)
 
-    def _download(self, page: str, download_dir: str):
-        session = create_session()
+            if "bar" in kwargs:
+                kwargs["bar"].next()
 
+    def _download(self, page: str, download_dir: str, session=create_session()):
         filename = clean_filename(page[page.rfind("/") + 1:])
         page_path = path.join(download_dir, filename)
 
-        r = session.get(page)
+        r = session.get(page, stream=True)
 
         with open(page_path, "wb") as f:
-            f.write(r.content)
+            for chunk in r:
+                f.write(chunk)
 
 
 class MultiThreadedDownloader(Downloader):
-    def __init__(self, comickaze: Comickaze, chapters: List[Chapter], number_of_threads: int = 2, daemon=True):
+    def __init__(self, comickaze: Comickaze, chapters: List[Chapter], number_of_threads: int = 4, daemon=True):
         super().__init__(comickaze, chapters)
+
         self.number_of_threads = number_of_threads
         self.daemon = daemon
 
     def start(self, download_dir):
-        # TODO: Improve progress showing.
-
         download_dir = path.normpath(download_dir)
         comic_dir = path.join(
             download_dir, clean_filename(self.comic.title))
 
-        with FillingCirclesBar(f"Downloading {self.comic.title}", max=len(self.chapters), suffix=f"Chapter 1 of {len(self.chapters)}") as bar:
+        total_pages = 0
+        for chapter in self.chapters:
+            total_pages += len(chapter.get_pages())
+
+        number_of_chapters = len(self.chapters)
+
+        with FillingCirclesBar(f"Downloading {self.comic.title}", max=total_pages) as bar:
             start_time = time.time()
 
             for i, chapter in enumerate(self.chapters):
-                bar.suffix = f"Chapter {i + 1} of {len(self.chapters)}. ETA: %(eta)ds"
+                pages = chapter.pages
 
-                pages = chapter.get_pages()
+                bar.suffix = f"Chapter {i + 1} of {number_of_chapters}. ETA: %(eta)ds"
 
                 chapter_dir = path.join(
                     comic_dir, clean_filename(chapter.title))
@@ -98,7 +112,6 @@ class MultiThreadedDownloader(Downloader):
                 create_folders(chapter_dir)
 
                 threads = []
-
                 mid = int(len(pages) / self.number_of_threads) + 1
                 for i in range(self.number_of_threads):
                     start = i * mid
@@ -109,14 +122,12 @@ class MultiThreadedDownloader(Downloader):
 
                     chapters_to_download = pages[start:end]
                     t = threading.Thread(target=self._download_pages,
-                                         args=(chapters_to_download, chapter_dir), daemon=self.daemon)
+                                         args=(chapters_to_download, chapter_dir), kwargs={"bar": bar}, daemon=self.daemon)
                     threads.append(t)
                     t.start()
 
                 for thread in threads:
                     thread.join()
-
-                bar.next()
 
             end_time = time.time()
             self.logger.info(
