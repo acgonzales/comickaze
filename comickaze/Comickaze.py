@@ -198,7 +198,7 @@ class Comickaze:
                 f"Something went wrong parsing the page.")
             raise
 
-    def create_downloader(self, chapters: List[Chapter], number_of_threads=1, **kwargs):
+    def create_downloader(self, chapters: List[Chapter], number_of_threads=4, **kwargs):
         if number_of_threads > 1:
             daemon = True
             if "daemon" in kwargs:
