@@ -6,6 +6,10 @@ import img2pdf
 
 from .util import create_folders, clean_filename
 
+PDF = "pdf"
+CBZ = "cbz"
+IMG = "jpg"
+
 
 def get_clean_output_path(output):
     filename = clean_filename(path.basename(output))
@@ -13,16 +17,16 @@ def get_clean_output_path(output):
 
 
 def get_images(dir):
-    return [path.join(path, img) for img in os.listdir(path) if img.endswith(".jpg") or img.endswith(".png")]
+    return [path.join(dir, img) for img in os.listdir(dir) if img.endswith(".jpg") or img.endswith(".png")]
 
 
 def to_CBZ(comic_dir, output):
     output = get_clean_output_path(output)
 
     with ZipFile(output, "w", ZIP_DEFLATED) as handle:
-        rel_root = path.abspath(comic_dir, os.pardir)
+        rel_root = path.abspath(path.join(comic_dir, os.pardir))
 
-        for root, _, files in os.walk(path):
+        for root, _, files in os.walk(comic_dir):
             handle.write(root, path.relpath(root, rel_root))
 
             for file in files:
@@ -34,6 +38,7 @@ def to_CBZ(comic_dir, output):
 
 
 def to_PDF(comic_dir, output):
+    # Not Working
     output = get_clean_output_path(output)
 
     with open(output, "wb") as f:
