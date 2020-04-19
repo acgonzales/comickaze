@@ -15,6 +15,3 @@ coloredlogs = "*"
 colorama = "*"
 bs4 = "*"
 progress = "*"
-
-[requires]
-python_version = "3.7"
