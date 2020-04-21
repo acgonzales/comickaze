@@ -19,12 +19,18 @@ setuptools.setup(
         "coloredlogs",
         "colorama",
         "progress",
-        "img2pdf"
+        "img2pdf",
+        "Click",
+        "pyinquirer"
     ],
     license="MIT",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent"
-    ]
+    ],
+    entry_points="""
+        [console_scripts]
+        comickaze=cli:cli
+    """
 )
