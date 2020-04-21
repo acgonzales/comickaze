@@ -18,7 +18,7 @@ from .objects import Chapter, Comic
 
 
 class Downloader:
-    def __init__(self, chapters: List[Chapter], output_format: str = CBZ, number_of_threads=4, **kwargs):
+    def __init__(self, chapters: List[Chapter], output_format: str = CBZ, number_of_threads: int = 4, log_level: str = "ERROR", **kwargs):
         """Creates a Downloader object
 
         Arguments:
@@ -50,7 +50,7 @@ class Downloader:
                 pass
 
         self.logger = logging.getLogger(__name__)
-        coloredlogs.install(level="VERBOSE", logger=self.logger)
+        coloredlogs.install(level=log_level, logger=self.logger)
 
     def start(self, download_dir: str):
         """Starts the download process.

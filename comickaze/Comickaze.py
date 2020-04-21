@@ -221,4 +221,4 @@ class Comickaze:
             Downloader -- Downloader object
         """
 
-        return Downloader(chapters, output_format=output_format, number_of_threads=number_of_threads, **kwargs)
+        return Downloader(chapters, output_format=output_format, number_of_threads=number_of_threads, log_level=self.log_level, **kwargs)
