@@ -20,12 +20,15 @@ def get_images(dir):
     return [path.join(dir, img) for img in os.listdir(dir) if img.endswith(".jpg") or img.endswith(".png")]
 
 
-def to_CBZ(comic_dir, filename, delete=True, **kwargs):
+def to_CBZ(comic_dir, delete=True, **kwargs):
     output_dir = path.dirname(comic_dir)
-    filename = clean_filename(filename)
+    filename = path.basename(comic_dir) + ".cbz"
 
-    if not filename.endswith(f".{CBZ}"):
-        filename += f".{CBZ}"
+    if filename in kwargs:
+        filename = clean_filename(kwargs["filename"])
+
+        if not filename.endswith(f".{CBZ}"):
+            filename += f".{CBZ}"
 
     if "output_dir" in kwargs:
         if path.isdir(kwargs["output_dir"]):
