@@ -108,6 +108,5 @@ def download(query, output_format, download_dir, delete_original, threads, daemo
         downloader.start(download_dir)
 
 
-@cli.command()
-def convert():
-    pass
+if __name__ == "__main__":
+    cli()
