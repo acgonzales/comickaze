@@ -10,6 +10,33 @@ pip install Comickaze
 
 ## Usage
 
+### CLI
+
+#### Download
+
+```bash
+Usage: comickaze download [OPTIONS]
+
+  Download Comics
+
+Options:
+  -q, --query TEXT
+  -o, --output-format [cbz|pdf|jpg]
+                                  The file format of the downloaded comics.
+  -d, --download-dir DIRECTORY    Download directory.
+  --delete-original               Set to false if you want to keep the images
+                                  before it was converted.
+
+  -t, --threads INTEGER           Number of threads to use while download a
+                                  chapter.
+
+  --daemon BOOLEAN                Sets the daemon value of the threads.
+  -ll, --log-level [DEBUG|VERBOSE|ERROR]
+                                  Sets the logger's log level.
+  --help                          Show this message and exit.
+```
+
+
 ### As a Package
 
 ```python
