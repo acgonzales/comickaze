@@ -1,6 +1,7 @@
 import unicodedata
 import string
 from os import path
+import shutil
 import pathlib
 
 import requests
@@ -20,6 +21,11 @@ def create_folders(directory):
 
     p = pathlib.Path(directory)
     p.mkdir(parents=True, exist_ok=True)
+
+
+def delete_folders(directory):
+    if path.exists(directory):
+        shutil.rmtree(directory, ignore_errors=True)
 
 
 def clean_filename(filename):
