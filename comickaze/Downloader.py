@@ -18,6 +18,16 @@ from .objects import Chapter, Comic
 
 class Downloader:
     def __init__(self, chapters: List[Chapter], output_format: str = CBZ, number_of_threads=4, **kwargs):
+        """Creates a Downloader object
+
+        Arguments:
+            chapters {List[Chapter]} -- Chapters to be downloaded
+
+        Keyword Arguments:
+            number_of_threads {int} -- Number of threads to use when downloading (default: {4})
+            output_format {str} -- Coversion format (default: {"cbz"})
+        """
+
         self.chapters = chapters
         self.comic = chapters[0].comic
 
@@ -39,6 +49,12 @@ class Downloader:
         coloredlogs.install(level="VERBOSE", logger=self.logger)
 
     def start(self, download_dir: str):
+        """Starts the download process.
+
+        Arguments:
+            download_dir {str} -- Download directory
+        """
+
         self.logger.info(
             f"Attempting to download {self.comic.title}, {len(self.chapters)} chapter(s).")
 

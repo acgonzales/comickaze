@@ -166,6 +166,15 @@ class Comickaze:
             raise
 
     def get_chapter_pages(self, chapter: Chapter):
+        """Gets the chapter's pages. URL of the pages images.
+
+        Arguments:
+            chapter {Chapter} -- Chapter
+
+        Returns:
+            list -- List of image urls
+        """
+
         link = chapter.link
         chapter_slug = link[link.rfind("/") + 1:]
 
@@ -198,5 +207,18 @@ class Comickaze:
                 f"Something went wrong parsing the page.")
             raise
 
-    def create_downloader(self, chapters: List[Chapter], number_of_threads=4, output_format="cbz", **kwargs):
+    def create_downloader(self, chapters: List[Chapter], number_of_threads=4, output_format="cbz", **kwargs) -> Downloader:
+        """Wrapper function to create a Downloader object.
+
+        Arguments:
+            chapters {List[Chapter]} -- Chapters to be downloaded
+
+        Keyword Arguments:
+            number_of_threads {int} -- Number of threads to use when downloading (default: {4})
+            output_format {str} -- Coversion format (default: {"cbz"})
+
+        Returns:
+            Downloader -- Downloader object
+        """
+
         return Downloader(chapters, output_format=output_format, number_of_threads=number_of_threads, **kwargs)
