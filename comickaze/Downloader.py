@@ -10,6 +10,7 @@ import coloredlogs
 from progress.bar import FillingCirclesBar
 
 from . import Comickaze
+from .exceptions import NoChapterError
 from .Converter import CBZ, PDF, IMG
 from .Converter import to_CBZ, to_PDF
 from .util import create_session, clean_filename, create_folders, delete_folders
@@ -27,6 +28,9 @@ class Downloader:
             number_of_threads {int} -- Number of threads to use when downloading (default: {4})
             output_format {str} -- Coversion format (default: {"cbz"})
         """
+
+        if len(chapters) < 1:
+            raise NoChapterError("This comic has no chapters!")
 
         self.chapters = chapters
         self.comic = chapters[0].comic
