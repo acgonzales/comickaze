@@ -7,7 +7,7 @@ import time
 import logging
 
 import coloredlogs
-from progress.bar import FillingCirclesBar
+from progress.bar import IncrementalBar as ProgressBar
 
 from . import Comickaze
 from .exceptions import NoChapterError
@@ -75,7 +75,7 @@ class Downloader:
         for chapter in self.chapters:
             total_pages += len(chapter.get_pages())
 
-        with FillingCirclesBar(f"Downloading {self.comic.title}", max=total_pages) as bar:
+        with ProgressBar(f"Downloading {self.comic.title}", max=total_pages) as bar:
             start_time = time.time()
 
             if self.number_of_threads > 1:
