@@ -15,9 +15,9 @@ def cli():
 
 
 @cli.command()
-@click.argument("query", type=types.STRING)
+@click.option("-q", "--query", type=types.STRING, prompt="Please input the title of your desired comics.")
 @click.option("-o", "--output-format", type=types.Choice([CBZ, PDF, IMG]), default=CBZ, help="The file format of the downloaded comics.")
-@click.option("-d", "--download-dir", type=types.Path(exists=False, resolve_path=True, file_okay=False, dir_okay=True), prompt=True, help="Download directory.")
+@click.option("-d", "--download-dir", type=types.Path(exists=False, resolve_path=True, file_okay=False, dir_okay=True), prompt="Where do you want to save the downloaded comics? (Path)", help="Download directory.")
 @click.option("--delete-original", is_flag=True, default=True, help="Set to false if you want to keep the images before it was converted.")
 @click.option("-t", "--threads", type=types.INT, default=4, help="Number of threads to use while download a chapter.")
 @click.option("--daemon", type=types.BOOL, default=True, help="Sets the daemon value of the threads.")
