@@ -47,4 +47,5 @@ multithreaded_downloader.start(download_dir)
 
 ## TODO:
 
-- [] CLI
+- [ ] CLI
+- [ ] More sources.
