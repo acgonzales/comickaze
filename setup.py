@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name="Comickaze",
-    version="2.0.0",
+    version="2.0.1b1",
     author="Aaron Gonzales",
     author_email="aaroncgonzales.dev@gmail.com",
     description="A package to search and download comics on ReadComicsOnline.ru",
@@ -31,6 +31,6 @@ setuptools.setup(
     ],
     entry_points="""
         [console_scripts]
-        comickaze=cli:cli
+        comickaze=comickaze.cli:cli
     """
 )
