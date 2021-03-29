@@ -1,23 +1,22 @@
--i https://pypi.org/simple
-beautifulsoup4==4.9.0
+-i https://pypi.org/simple/
+beautifulsoup4==4.9.3
 bs4==0.0.1
-certifi==2020.4.5.1
+certifi==2020.12.5
 chardet==3.0.4
 click==7.1.1
 colorama==0.4.3
 coloredlogs==14.0
-humanfriendly==8.2
-idna==2.9
+humanfriendly==9.1
+idna==2.10
 img2pdf==0.3.4
-pillow==7.1.1
+pillow==8.1.2
 progress==1.5
 prompt-toolkit==1.0.14
-pygments==2.6.1
+pygments==2.7.4
 pyinquirer==1.0.3
-pyreadline==2.1 ; sys_platform == 'win32'
-regex==2020.4.4
+regex==2021.3.17
 requests==2.23.0
-six==1.14.0
-soupsieve==2.0
-urllib3==1.25.9
-wcwidth==0.1.9
+six==1.15.0
+soupsieve==2.2.1 ; python_version >= '3.0'
+urllib3==1.25.11
+wcwidth==0.2.5
